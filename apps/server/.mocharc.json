@@ -1,0 +1,5 @@
+{
+  "slow": 500,
+  "timeout": 2500,
+  "exit": true
+}

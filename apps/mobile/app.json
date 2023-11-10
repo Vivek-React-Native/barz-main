@@ -1,0 +1,94 @@
+{
+  "expo": {
+    "name": "Barz Rap Battle",
+    "slug": "barz-app",
+    "version": "1.0.3",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F86E"
+    },
+    "scheme": "barz",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rapbattleapp.mobile",
+      "runtimeVersion": {
+        "policy": "sdkVersion"
+      },
+      "entitlements": {
+        "com.apple.developer.applesignin": ["Default"]
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.rapbattleapp.mobile",
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "barz",
+            "project": "barz-mobile"
+          }
+        }
+      ]
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 33,
+            "minSdkVersion": 24,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0"
+          }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera.",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to select a profile image."
+        }
+      ],
+      "@config-plugins/detox",
+      [
+        "expo-updates",
+        {
+          "username": "madebybread"
+        }
+      ],
+      ["sentry-expo"]
+    ],
+    "owner": "madebybread",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "005fe05b-e56f-40eb-9e92-1695e69f0e58"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/005fe05b-e56f-40eb-9e92-1695e69f0e58"
+    }
+  }
+}

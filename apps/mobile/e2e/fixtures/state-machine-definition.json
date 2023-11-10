@@ -1,0 +1,152 @@
+{
+  "id": "Rap Battle",
+  "initial": "CREATED",
+  "context": {
+    "version": 1,
+    "battleId": "CURRENTBATTLE",
+    "participantIds": [
+      "CURRENTPARTICIPANT",
+      "OTHERPARTICIPANT"
+    ],
+    "nextMessageUuid": "e87ace9b-f4fd-4c56-8fa7-a0a065c4c9eb",
+    "activeRoundIndex": 0,
+    "totalNumberOfRounds": 1,
+    "acknowlegedMessageUuids": [],
+    "currentParticipantIndex": 0
+  },
+  "predictableActionArguments": true,
+  "states": {
+    "CREATED": {
+      "entry": [
+        "muteLocalAudio"
+      ],
+      "always": {
+        "target": "COIN_TOSS"
+      }
+    },
+    "COIN_TOSS": {
+      "exit": [
+        "muteLocalAudio"
+      ],
+      "after": {
+        "3000": {
+          "target": "READY"
+        }
+      }
+    },
+    "READY": {
+      "always": [
+        {
+          "target": "WARM_UP",
+          "cond": "isThisParticipantActive"
+        },
+        {
+          "target": "WAITING",
+          "cond": "isThisParticipantNotActive"
+        },
+        {
+          "target": "TRANSITION_TO_SUMMARY",
+          "cond": "isBattleComplete"
+        }
+      ]
+    },
+    "WAITING": {
+      "on": {
+        "MOVE_TO_NEXT_PARTICIPANT": {
+          "target": "TRANSITION_TO_NEXT_BATTLER",
+          "actions": [
+            "moveToNextParticipant",
+            "addAcknowledgedMessageToContext"
+          ]
+        },
+        "MOVE_TO_NEXT_ROUND": {
+          "target": "TRANSITION_TO_NEXT_ROUND",
+          "actions": [
+            "moveToNextRound",
+            "addAcknowledgedMessageToContext"
+          ]
+        },
+        "BATTLE_COMPLETE": {
+          "target": "TRANSITION_TO_SUMMARY",
+          "actions": [
+            "addAcknowledgedMessageToContext"
+          ]
+        }
+      }
+    },
+    "WARM_UP": {
+      "entry": [
+        "unmuteLocalAudio"
+      ],
+      "after": {
+        "3000": {
+          "target": "BATTLE"
+        }
+      }
+    },
+    "BATTLE": {
+      "exit": [
+        "muteLocalAudio"
+      ],
+      "after": {
+        "3000": [
+          {
+            "target": "TRANSITION_TO_NEXT_BATTLER",
+            "cond": "shouldMoveToNextParticipant",
+            "actions": [
+              "generateNextMessageUuid",
+              "broadcastMoveToNextParticipant",
+              "moveToNextParticipant"
+            ]
+          },
+          {
+            "target": "TRANSITION_TO_NEXT_ROUND",
+            "cond": "shouldMoveToNextRound",
+            "actions": [
+              "generateNextMessageUuid",
+              "broadcastMoveToNextRound",
+              "moveToNextRound"
+            ]
+          },
+          {
+            "target": "TRANSITION_TO_SUMMARY",
+            "cond": "isBattleComplete",
+            "actions": [
+              "generateNextMessageUuid",
+              "broadcastBattleComplete"
+            ]
+          }
+        ]
+      }
+    },
+    "TRANSITION_TO_NEXT_BATTLER": {
+      "after": {
+        "1000": {
+          "target": "READY"
+        }
+      }
+    },
+    "TRANSITION_TO_NEXT_ROUND": {
+      "after": {
+        "1000": {
+          "target": "READY"
+        }
+      }
+    },
+    "TRANSITION_TO_SUMMARY": {
+      "after": {
+        "1000": {
+          "target": "SUMMARY"
+        }
+      }
+    },
+    "SUMMARY": {
+      "always": {
+        "target": "COMPLETE"
+      }
+    },
+    "COMPLETE": {
+      "type": "final"
+    }
+  }
+}

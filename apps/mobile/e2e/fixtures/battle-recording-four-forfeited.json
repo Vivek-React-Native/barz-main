@@ -1,0 +1,62 @@
+{
+  "battleId": "BATTLERECORDINGFOUR",
+  "battleStartedAt": null,
+  "battleCompletedAt": null,
+  "battleComputedPrivacyLevel": "PUBLIC",
+  "battleComputedHasBeenForfeited": true,
+  "battleExportedVideoUrl": null,
+  "battleVotingEndsAt": null,
+  "phases": [],
+  "participants": [
+    {
+      "id": "t8UevKXnytvm4XrzycQUrkRek",
+      "order": 0,
+      "twilioAudioTrackId": "MT5a804912a703ef97d10a75a232602f83",
+      "twilioVideoTrackId": "MT42bbaa46f91510638e21d5f43fbc0801",
+      "twilioDataTrackId": "UNKNOWN",
+      "forfeitedAt": "2023-06-27T15:57:49.275Z",
+      "twilioAudioRecordingId": "RT25c264e3bc87fba0b3d4c24b284b0a76",
+      "twilioVideoRecordingId": "RT50ea45451a1089b578f107d957e57f4e",
+      "videoStreamingStartedAt": "2023-06-27T15:57:52.342Z",
+      "madeInactiveAt": "2023-06-27T15:59:31.136Z",
+      "mediaUrl": "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+      "mediaThumbnailUrls": {},
+      "mediaOffsetMilliseconds": 0,
+      "computedTotalVoteAmount": 10,
+      "user": {
+        "id": "cljcwr5ph0000wa0g0zn22v8r",
+        "handle": "participant4a",
+        "name": "participant4a",
+        "profileImageUrl": null,
+        "computedScore": 6000,
+        "computedFollowersCount": 0,
+        "computedFollowingCount": 0
+      }
+    },
+    {
+      "id": "PGOaOtC8mMds56Vn4vkREyjBx",
+      "order": 1,
+      "twilioAudioTrackId": "MT783067bacb37a0d7dbb1ff19aa09a72e",
+      "twilioVideoTrackId": "MT2512f452089abff47a358259f55fcfe7",
+      "twilioDataTrackId": "UNKNOWN",
+      "forfeitedAt": null,
+      "twilioAudioRecordingId": "RTb342ff4883bfd311889edbb34a592414",
+      "twilioVideoRecordingId": "RT327eacecc7a7ab75a61e79ab7217a4b9",
+      "videoStreamingStartedAt": "2023-06-27T15:57:51.200Z",
+      "madeInactiveAt": "2023-06-27T15:59:31.136Z",
+      "mediaUrl": "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+      "mediaThumbnailUrls": {},
+      "mediaOffsetMilliseconds": 0,
+      "computedTotalVoteAmount": 4,
+      "user": {
+        "id": "clj92i92n0000x40ggi4ig4xb",
+        "handle": "participant4b",
+        "name": "participant4b",
+        "profileImageUrl": null,
+        "computedScore": 9000,
+        "computedFollowersCount": 0,
+        "computedFollowingCount": 0
+      }
+    }
+  ]
+}

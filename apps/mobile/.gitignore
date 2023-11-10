@@ -1,0 +1,29 @@
+node_modules/
+.expo/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+ios
+android
+
+# macOS
+.DS_Store
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*
+
+.*.sw*
+
+#figma-export-icons
+icons-config.json
+.fetched-icons
+.figma-token
+.icon-components
+index-icon-template.js
+icon-template.js

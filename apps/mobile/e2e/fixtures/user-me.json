@@ -1,0 +1,24 @@
+{
+  "id": "cljcwr5ph0000wa0g0zqup6q6",
+  "handle": "sampleuser",
+  "name": "Sample User",
+  "profileImageUrl": null,
+  "computedScore": 5000,
+  "computedFollowersCount": 0,
+  "computedFollowingCount": 0,
+  "computedIsBeingFollowedByUserMe": false,
+  "lastViewedBattleId": null,
+  "maxNumberOfVotesPerBattle": 20,
+
+  "intro": "",
+  "locationName": null,
+  "locationLatitude": null,
+  "locationLongitude": null,
+  "favoriteRapperSpotifyId": null,
+  "favoriteRapperName": null,
+  "favoriteSongSpotifyId": null,
+  "favoriteSongName": null,
+  "favoriteSongArtistName": null,
+  "instagramHandle": null,
+  "soundcloudHandle": null
+}

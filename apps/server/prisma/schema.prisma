@@ -1,0 +1,581 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["orderByNulls"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A `Battle` represents a rap battle.
+model Battle {
+  @@map("battle")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // If a user leaves a battle, it will be marked as inactive, which will result
+  // in all users being forced out of the battle and the battle matching process
+  // beginning again from scratch. This is the time at which this occurs.
+  madeInactiveAt DateTime? @map("made_inactive_at")
+  madeInactiveReason String? @map("made_inactive_reason")
+
+  // The start and end time of the battle:
+  // - started_at is the time that the final user presses "ready" and all state machines can start
+  //   running on the phones
+  // - completed_at is the time that the battle transitions into the COMPLETED state. Note that it's
+  //   possible for the video to extend beyong this time if the users are talking after the battle!
+  // 
+  // NOTE: Importantly, the time at which a participant's video stream starts and ends are NOT
+  // NECESARILY THE SAME as these values! Look at the `video_streaming_started_at` on the battle
+  // participant if you are looking for this.
+  startedAt DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+
+  participants BattleParticipant[]
+
+  // How many rounds should be in this battle?
+  numberOfRounds Int @default(1) @map("number_of_rounds")
+
+  // The length of time in seconds that each user raps within a round.
+  // As of late april 2023, this is 40 seconds.
+  turnLengthSeconds Float @default(40.0) @map("turn_length_seconds")
+
+  // The length of time that a user warms up for in the battle.
+  // Note that this is a subset of the `turnLengthSeconds` value, and not in addition to this value.
+  // As of late april 2023, this is 10 seconds.
+  warmupLengthSeconds Float @default(10.0) @map("warmup_length_seconds")
+
+  twilioRoomName String @map("twilio_room_name")
+  twilioRoomSid String @default("") @map("twilio_room_sid")
+
+  // Each battle has an associated backing beat that plays during the battle during each battle turn
+  beat BattleBeat @relation(fields: [beatId], references: [id])
+  beatId String @map("beat_id")
+
+  // When should voting for this battle no longer be permitted?
+  votingEndsAt DateTime? @map("voting_ends_at")
+
+  // Has at least one vote been cast for this battle?
+  // This flag, when true, means that the battle will be considered in the user score tabulation
+  computedHasReceivedVotes Boolean @default(false) @map("computed_has_received_votes")
+
+  // Has a participant within the battle forfeited?
+  // This flag, when true, means that it will be included in the user score tabulation, with the
+  // user that forfeited being the user that lost the battle
+  computedHasBeenForfeited Boolean @default(false) @map("computed_has_been_forfeited")
+
+  // This field indicated whether a given battle is accessible publically across all barz users, or
+  // only the users that are participants of the battle
+  computedPrivacyLevel String @default("PRIVATE") @map("computed_privacy_level")
+
+  // Once all participant videos are generated, then the battle export is generated. These fields
+  // store metadata associated with the exported video - it's key in the barz-videos bucket, when
+  // the exported video starts processing, it's processing status, etc
+  exportedVideoStatus String? @map("exported_video_status")
+  exportedVideoKey String? @map("exported_video_key")
+  exportedVideoQueuedAt DateTime? @map("exported_video_queued_at")
+  exportedVideoStartedAt DateTime? @map("exported_video_started_at")
+  exportedVideoCompletedAt DateTime? @map("exported_video_completed_at")
+  exportedVideoThumbnails BattleExportThumbnail[]
+
+  stateMachineEvents BattleParticipantStateMachineEvent[]
+  views BattleView[]
+  comments BattleComment[]
+  challenge Challenge?
+}
+
+// A `BattleParticipant` represents a user who would like to participant in a rap battle. Battle
+// participants are grouped with each other and once this is done, a new `Battle` is created.
+model BattleParticipant {
+  @@map("battle_participant")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // If a user leaves a battle, the participant will be marked as inactive so that it will not be
+  // included in the matching algorithm
+  madeInactiveAt DateTime? @map("made_inactive_at")
+  madeInactiveReason String? @map("made_inactive_reason")
+
+  // Store a timestamp indicating when the participant matching process started
+  matchingStartedAt DateTime @default(now()) @map("matching_started_at")
+  matchingAlgorithm String @default("DEFAULT") @map("matching_algorithm")
+
+  // The timestamp when matching completes / a participant is associated with a battle
+  associatedWithBattleAt DateTime? @map("associated_with_battle_at")
+
+  // The server-generated timestamp when a user began streaming video to twilio video
+  //
+  // This timestamp corresponds to time 0:00 in all video and audio artifacts generated on twilio's
+  // end for each room
+  videoStreamingStartedAt DateTime? @map("video_streaming_started_at")
+
+  // `Checkin`s track every time that a client reaches out to the server to say that it is still
+  // online. These allow for the server and other clients to be able to determine if the client in
+  // question is still alive.
+  checkins BattleParticipantCheckin[]
+
+  // The connection status represents the state of the connection between the phone and the server.
+  // - "ONLINE": The connection is healthy and everything seems to be working as expected
+  // - "OFFLINE": The server has been unable to receive checkins from the phone in a while, and the
+  //              phone is assumed to be offline.
+  // - "UNKNOWN": The initial value for this field.
+  connectionStatus String @default("UNKNOWN") @map("connection_status")
+
+  // When matching participants with other participants, if the initial pairing process fails due to
+  // a lack of other participants, then set this value.
+  //
+  // The mobile app will be able to use this to tell a user that there isn't another participant
+  // immediately available and they may have to wait a moment for one to be made.
+  initialMatchFailed Boolean @default(false) @map("initial_match_failed")
+
+  battle Battle? @relation(fields: [battleId], references: [id])
+  battleId String? @map("battle_id")
+
+  // Once the user acknowledges that they are ready for battle, this time is set
+  // After this is set on all participants, the battle begins!
+  readyForBattleAt DateTime? @map("ready_for_battle_at")
+
+  // Before the battle, each participant has the ability to vote on whether they'd like the battle
+  // to be public or private. This value defaults to `null` but eventually is set to `PUBLIC` or
+  // `PRIVATE` once a user selects an option in the app.
+  //
+  // If both users select PUBLIC, then the final battle will also be public.
+  requestedBattlePrivacyLevel String? @map("requested_battle_privacy_level")
+
+  // Store the id of each track provided by the twilio video interface so that clients can figure
+  // out which participant in the database is which set of tracks in twilio
+  twilioAudioTrackId String? @map("twilio_audio_track_id")
+  twilioVideoTrackId String? @map("twilio_video_track_id")
+  twilioDataTrackId String? @map("twilio_data_track_id")
+
+  // Store the id of each track's recording provided by the twilio video interface
+  // This is used to fetch the source video file when encoding the video track
+  twilioAudioRecordingId String? @map("twilio_audio_recording_id")
+  twilioVideoRecordingId String? @map("twilio_video_recording_id")
+
+  // The current state of the battle state machine running on this participant's phone
+  currentState String @default("CREATED") @map("current_state")
+
+  // The context of the battle state machine running on the participant's phone
+  currentContext Json @default("{}") @map("current_context")
+
+  // Is the app in the background or foreground?
+  // This value is `null` until the battle starts, then becomes "FOREGROUND". If the app gets
+  // backgrounded, this value becomes "BACKGROUND".
+  appState String? @map("app_state")
+  appStateLastChangedAt DateTime? @map("app_state_last_changed_at")
+
+  // If a user presses the "forfeit" button, this timestamp is set and this results in a clout score
+  // penalty for doing this
+  forfeitedAt DateTime? @map("forfeited_at")
+
+  // The associated user that will be rapping in the battle
+  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+  // The user's score when the battle is created - this is important for the clout score calculation
+  // so that the probability of a battle win can be computed using the user's score _at the time_,
+  // NOT their current score
+  userComputedScoreAtBattleCreatedAt Int? @map("user_computed_score_at_battle_created_at")
+
+  // Stores a cached value indicating if the user was a winner of the battle.
+  // This value is `null` if the battle has not started yet.
+  // If the battle ended in a draw / tie, then this field is `true` for all participants.
+  computedDidWinOrTieBattle Boolean? @map("computed_did_win_or_tie_battle")
+
+  // The order in which this participant raps within each round of the battle
+  order Int?
+
+  // A list of all state machine events that this participant has published over time
+  triggeredStateMachineEvents BattleParticipantStateMachineEvent[]
+
+  // A list of all records of votes for this battle; this is used to figure out who won the battle!
+  votes BattleParticipantVote[] @relation("votes")
+
+  // Once the raw mkv video and mka audio are generated by twilio, then the video is processed into
+  // a mp4 in the battle-participant-video-generation-worker. These fields store metadata
+  // associated with the mp4 video - it's key in the barz-videos bucket, when the mp4 video
+  // starts processing, it's processing status, etc
+  processedVideoStatus String? @map("processed_video_status")
+  processedVideoKey String? @map("processed_video_key")
+  processedVideoThumbnails BattleParticipantThumbnail[]
+  processedVideoQueuedAt DateTime? @map("processed_video_queued_at")
+  processedVideoStartedAt DateTime? @map("processed_video_started_at")
+  processedVideoCompletedAt DateTime? @map("processed_video_completed_at")
+  // The offset of the generated video artifact from the start of the battle. This is typically
+  // equal to the length of time from when the battle starts until the first battler goes into
+  // "WARM_UP".
+  processedVideoOffsetMilliseconds Int @default(0) @map("processed_video_offset_milliseconds")
+
+  // Participants within a battle must all be given different `order` values
+  @@unique([battleId, order])
+}
+
+// A `BattleParticipantCheckin` stores snapshots of the current state of the battle state machine
+// over time.
+model BattleParticipantCheckin {
+  @@map("battle_participant_checkin")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  checkedInAt DateTime @default(now()) @map("checked_in_at")
+
+  // When the checkin was sent, this value represents the offset in milliseconds that the
+  // twilio video stream was at.
+  videoStreamOffsetMilliseconds Float? @map("video_stream_offset_milliseconds")
+
+  battleParticipant BattleParticipant @relation(fields: [battleParticipantId], references: [id])
+  battleParticipantId String @map("battle_participant_id")
+
+  // The state of the battle state machine at the given checkin time
+  state String @default("CREATED") @map("state")
+
+  // The context of the battle state machine at the given checkin time
+  context Json @default("{}") @map("context")
+}
+
+// A `BattleParticipantStateMachineEvent` stores a list of events that are sent at certain times
+// while executing each client's state machine to signal handoff of execution from one state machine
+// to another.
+model BattleParticipantStateMachineEvent {
+  @@map("battle_participant_state_machine_event")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  battle Battle @relation(fields: [battleId], references: [id])
+  battleId String @map("battle_id")
+
+  // This uuid is generated by the client when the state machine event is generated, prior to it
+  // being saved to the server. It's then stored in each individual client's state machine context
+  // to recognise receipt of the event.
+  //
+  // The server generated id would not work for this field because then the client would have to
+  // reach out to the server prior to sending the event to other clients, which is an extra source
+  // of lag in the battle on a low bandwidth mobile connection. By using a seperate id, these steps
+  // can occur in parallel.
+  clientGeneratedUuid String @map("client_generated_uuid")
+
+  // The participant that published the event
+  triggeredByParticipant BattleParticipant @relation(fields: [triggeredByParticipantId], references: [id])
+  triggeredByParticipantId String @map("triggered_by_participant_id")
+
+  payload Json @default("{}") @map("payload")
+}
+
+// This model represents a vote that has been cast by a viewer of a battle for one of its
+// participants
+model BattleParticipantVote {
+  @@map("battle_participant_vote")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // When was the series of votes cast on the mobile app?
+  startedCastingAt DateTime @default(now()) @map("started_casting_at")
+  endedCastingAt DateTime @default(now()) @map("ended_casting_at")
+
+  // The video offsets in milliseconds for startedCastingAt and endedCastingAt
+  startedCastingAtVideoStreamOffsetMilliseconds Float @default(0.0) @map("started_casting_at_video_stream_offset_milliseconds")
+  endedCastingAtVideoStreamOffsetMilliseconds Float @default(0.0) @map("ended_casting_at_video_stream_offset_milliseconds")
+
+  // Which user cast the vote?
+  // Among other things, this is important to track how many times a user has voted for a given
+  // battle
+  castByUser User? @relation(fields: [castByUserId], references: [id])
+  castByUserId String? @map("cast_by_user_id")
+
+  // Allows multiple votes by a user in a "burst" to be combined together into one database
+  // row.
+  //
+  // This is a bit of an optimization to attempt to minimize the amount of database rows if a
+  // user presses the vote button over and over repeatetly in quick succession.
+  amount Int @default(1) @map("amount")
+
+  // This uuid is generated by the client when the vote is submitted, and then stored on each
+  // client. The client then optimistically updates the vote total, and can use this uuid to ignore
+  // events that were already "optimistically updated" / sent by the same app instance.
+  //
+  // The server generated id could work for this field, but I want to make the interface more
+  // flexible so that in the future, vote tabulation can be deferred / moved into a queue and not
+  // done syncrnously in the endpoint. If vote tabulation happend in a worker, then the vote id
+  // wouldn't be known when the endpoint returned its response back to the client.
+  clientGeneratedUuid String @default("") @map("client_generated_uuid")
+
+  // The battle barticipant that is being voted for
+  battleParticipant BattleParticipant @relation("votes", fields: [battleParticipantId], references: [id])
+  battleParticipantId String @map("battle_participant_id")
+}
+
+// This model represents a thumbnail image that is synthesized for each participant (ie, 1 of each
+// size per participant) during the video generation process
+model BattleParticipantThumbnail {
+  @@map("battle_participant_thumbnail")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // The width and height of the thumbnail image
+  size Int @map("size")
+
+  // The video offsets in milliseconds that the thumbnail was generated from
+  fromVideoStreamOffsetMilliseconds Float @default(0.0) @map("from_video_stream_offset_milliseconds")
+
+  key String @map("key")
+
+  // The battle barticipant that the thumbnail image was generated for
+  battleParticipant BattleParticipant @relation(fields: [battleParticipantId], references: [id])
+  battleParticipantId String @map("battle_participant_id")
+
+  // Only one size thumbnail is allowed per participant video
+  @@unique([size, battleParticipantId])
+}
+
+// This model represents a backing beat that can be used in a battle.
+model BattleBeat {
+  @@map("battle_beat")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  beatKey String @map("beat_key")
+
+  enabled Boolean @default(true) @map("enabled")
+
+  battles Battle[]
+}
+
+// This model represents an instance of a user watching a battle
+model BattleView {
+  @@map("battle_view")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  completedViewingAt DateTime @default(now()) @map("completed_viewing_at")
+
+  // This represents the duration in milliseconds from when the video initially is unpaused in the
+  // app until the user releases their finger after completing the swipe to move to the next video
+  timeSpentWatchingBattleInMilliseconds Float? @map("time_spent_watching_battle_in_milliseconds")
+
+  battle Battle? @relation(fields: [battleId], references: [id])
+  battleId String? @map("battle_id")
+
+  user User? @relation(fields: [userId], references: [id])
+  userId String? @map("user_id")
+}
+
+// This model represents a comment that has been left on a battle
+model BattleComment {
+  @@map("battle_comment")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Store a "deleted at" timestamp to support soft deleting of battle comments
+  deletedAt DateTime? @map("deleted_at")
+
+  commentedAt DateTime @default(now()) @map("commented_at")
+  commentedAtOffsetMilliseconds Float @map("commented_at_offset_milliseconds")
+
+  text String @map("text")
+
+  battle Battle @relation(fields: [battleId], references: [id])
+  battleId String @map("battle_id")
+
+  user User @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  votes BattleCommentVote[]
+}
+
+// This model represents a vote that a user has left on a comment
+model BattleCommentVote {
+  @@map("battle_comment_vote")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Store a "deleted at" timestamp to support soft deleting of battle comment votes
+  deletedAt DateTime? @map("deleted_at")
+
+  // For what comment was the given vote cast for?
+  comment BattleComment @relation(fields: [commentId], references: [id])
+  commentId String @map("comment_id")
+
+  // When was the vote for the comment cast?
+  castAt DateTime @default(now()) @map("commented_at")
+
+  // Which user cast the given vote?
+  castByUser User @relation(fields: [castByUserId], references: [id])
+  castByUserId String @map("cast_by_user_id")
+
+  // Ensure that only one vote can be cast per comment that is not deleted
+  @@unique([commentId, castByUserId, deletedAt])
+}
+
+// This model represents a thumbnail image generated for the entire export (ie, 1 of each size per battle) during
+// the video export generation process.
+model BattleExportThumbnail {
+  @@map("battle_export_thumbnail")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // The width and height of the thumbnail image
+  size Int @map("size")
+
+  key String @map("key")
+
+  // The battle that the thumbnail image was generated for
+  battle Battle @relation(fields: [battleId], references: [id])
+  battleId String @map("battle_id")
+
+  // Only one size thumbnail is allowed per battle export video
+  @@unique([size, battleId])
+}
+
+// This model represents a request that a given user sends another user to attempt to battle them
+model Challenge {
+  @@map("challenge")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // A challenge's status marks where the given challenge is within its lifecycle
+  // A challenge starts as PENDING, and then can either go to STARTED, or CANCELLED
+  // - STARTED means that all users have joined the waiting room and 
+  // - CANCELLED means that the `createdByUserId` (the user that created the challenge) pressed
+  //   "cancel" in the app, and the challenge is no longer active
+  //
+  // Once the status has transitioned into STARTED or CANCELLED, it should not ever
+  // change again.
+  status String @default("PENDING") @map("status")
+
+  createdByUser User @relation("challenge_created_by_user", fields: [createdByUserId], references: [id])
+  createdByUserId String @map("created_by_user_id")
+  createdByUserInWaitingRoom Boolean @default(false) @map("created_by_user_in_waiting_room")
+  createdByUserLastAliveAt DateTime? @map("created_by_user_last_alive_at")
+
+  challengedUser User @relation("challenge_challenged_user", fields: [challengedUserId], references: [id])
+  challengedUserId String @map("challenged_user_id")
+  challengedUserInWaitingRoom Boolean @default(false) @map("challenged_user_in_waiting_room")
+  challengedUserLastAliveAt DateTime? @map("challenged_user_last_alive_at")
+
+  startedAt DateTime? @map("started_at")
+  startedByUser User? @relation("challenge_started_by_user", fields: [startedByUserId], references: [id])
+  startedByUserId String? @map("started_by_user")
+  cancelledAt DateTime? @map("cancelled_at")
+  cancelledByUser User? @relation("challenge_cancelled_by_user", fields: [cancelledByUserId], references: [id])
+  cancelledByUserId String? @map("cancelled_by_user")
+
+  // Once the challenge has been accepted, a battle is created, and associated with the challenge
+  // via a 1:1 relation
+  battle Battle? @relation(fields: [battleId], references: [id])
+  battleId String? @map("battle_id") @unique
+}
+
+// This model represents a user that has access to the api.
+model User {
+  @@map("clerk_user")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  clerkId String? @unique @map("clerk_id")
+  phoneNumber String? @map("phone_number")
+  name String? @map("name")
+  handle String? @map("handle")
+  profileImageUrl String? @map("profile_image_url")
+
+  // Bio information
+  intro String @default("") @map("intro")
+  locationName String? @map("location_name")
+  locationLatitude Float? @map("location_latitude")
+  locationLongitude Float? @map("location_longitude")
+  favoriteRapperSpotifyId String? @map("favorite_rapper_spotify_id")
+  favoriteRapperName String? @map("favorite_rapper_name")
+  favoriteSongSpotifyId String? @map("favorite_song_spotify_id")
+  favoriteSongName String? @map("favorite_song_name")
+  favoriteSongArtistName String? @map("favorite_song_artist_name")
+  // links?
+  instagramHandle String? @map("instagram_handle") // https://instagram.com/<handle here>
+  // spotify? // https://open.spotify.com/user/<handle here>
+  soundcloudHandle String? @map("soundcloud_handle") // https://soundcloud.com/<handle here>
+  // photos?
+
+
+  // Stores a cached copy of a user's clout score.
+  //
+  // This is computed by aggregating through all of the battles that the user has won or
+  // lost, and running the elo calculation when any of the `computedDidWinOrTieBattle` values
+  // on a battle's participants change.
+  computedScore Int @default(1000) @map("computed_score")
+
+  // Stores a cached copy of the number of users that this user follows, and the number
+  // of users that this user is followed by.
+  //
+  // Caching these is largely as of early august 2023 being done due to a prisma query limitation.
+  // Without ejecting to raw sql, it's impossible to get the count of a many to many relation in
+  // a single `findMany` query, so computing this would require a n+1 query using `count` which is bad.
+  computedFollowersCount Int @default(0) @map("computed_followers_count")
+  computedFollowingCount Int @default(0) @map("computed_following_count")
+
+  battleViews BattleView[]
+  battleParticipants BattleParticipant[]
+  battleParticipantVotes BattleParticipantVote[]
+
+  battleComments BattleComment[]
+  battleCommentVotes BattleCommentVote[]
+
+  following UserFollows[] @relation("userfollows_user")
+  followedBy UserFollows[] @relation("userfollows_follows_user")
+
+  challengesCreated Challenge[] @relation("challenge_created_by_user")
+  challengesOffered Challenge[] @relation("challenge_challenged_user")
+  challengesStarted Challenge[] @relation("challenge_started_by_user")
+  challengesCancelled Challenge[] @relation("challenge_cancelled_by_user")
+}
+
+// This model is a many to many through model that represents all relationships between a user and
+// other users that they follow.
+//
+// Note that following is directional, so these rows end up representing the edges of a directed acyclic graph
+model UserFollows {
+  @@map("clerk_user_follows")
+
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation("userfollows_user", fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  followsUser User @relation("userfollows_follows_user", fields: [followsUserId], references: [id])
+  followsUserId String @map("follows_user_id")
+
+  // The time at which `user` followed `followsUser`
+  followedAt DateTime @default(now()) @map("followed_at")
+
+  // Make sure that a user can only follow another user once
+  @@unique([userId, followsUserId])
+}

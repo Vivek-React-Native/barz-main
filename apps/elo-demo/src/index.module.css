@@ -1,0 +1,173 @@
+.playerList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 100px;
+}
+.player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+}
+.playerFormFields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.battleList > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 100px;
+}
+
+.battle {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  gap: 8px;
+  border-left: 4px solid rgba(255,255,255,0.1);
+  padding-left: 8px;
+}
+.battleRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+}
+.battleFormFields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.battleIndex {
+  user-select: none;
+  cursor: grab;
+  font-size: 14px;
+  font-family: 'menlo', 'monospace';
+  white-space: nowrap;
+}
+
+.battleResults {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+}
+.battleResult {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  height: 56px;
+}
+.battleResultName {
+  font-size: 12px;
+  font-weight: bold;
+}
+.battleResultScore {
+  font-family: 'menlo', 'monospace';
+  font-size: 16px;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.battleResultScore.strike {
+  text-decoration: line-through;
+}
+.battleResultScoreActual {
+  font-family: 'menlo', 'monospace';
+  font-size: 14px;
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.resultsList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 200px;
+}
+.versus {
+  color: #858585;
+  font-size: 14px;
+}
+
+.appBar {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 800px;
+  gap: 8px;
+  margin: 0px auto;
+}
+
+.constants {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  gap: 4px;
+  margin: 0px auto;
+  margin-bottom: 100px;
+}
+.constant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.computedDataNote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+  height: 32px;
+  user-select: none;
+}
+
+.computedDataNoteInner {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.computedDataNoteInner > span:first-child {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+.computedDataNoteInner > span:last-child {
+  font-size: 10px;
+  font-weight: normal;
+}

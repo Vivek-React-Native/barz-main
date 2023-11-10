@@ -1,0 +1,52 @@
+{
+  "cli": {
+    "version": ">= 3.14.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development-simulator": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "channel": "development-simulator"
+    },
+    "production-test": {
+      "developmentClient": false,
+      "distribution": "store",
+      "channel": "production"
+    },
+    "development": {
+      "node": "19.8.1",
+      "distribution": "internal",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
+      }
+    },
+    "preview": {
+      "node": "19.8.1",
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "channel": "preview"
+    },
+    "production": {
+      "node": "19.8.1",
+      "autoIncrement": true,
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "companyName": "THE UNSUNG LLC",
+        "ascAppId": "6450682451"
+      }
+    }
+  }
+}

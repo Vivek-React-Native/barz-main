@@ -1,0 +1,9 @@
+node_modules
+.*.sw*
+
+.env
+.pgdata
+.redisdata
+.DS_store
+.local-object-storage
+.barz-shell-history

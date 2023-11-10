@@ -1,0 +1,50 @@
+# syntax = docker/dockerfile:1
+
+# Adjust NODE_VERSION as desired
+ARG NODE_VERSION=19.8.1
+FROM node:${NODE_VERSION}-slim as base
+
+# Scaffold out a rough fake monorepo structure
+RUN mkdir -p /repo/apps/server
+
+# Set production environment
+ENV NODE_ENV=production
+ENV SENTRY_DSN=https://8356322a621f40579893637742e2f2f2@o4505432667979776.ingest.sentry.io/4505433094619136
+
+# Throw-away build stage to reduce size of final image
+FROM base as build
+
+# Install packages needed to build node modules
+RUN apt-get update -qq && apt-get install -y python-is-python3 pkg-config build-essential openssl
+
+# Make sure that the right version of pnpm is installed
+RUN npm install -g pnpm@8.6.2
+
+# Install node modules for the whole monorepo
+WORKDIR /repo
+COPY ./pnpm-lock.yaml pnpm-lock.yaml
+COPY ./package.json package.json
+
+# Then install node modules for the server spefifically
+WORKDIR /repo/apps/server
+COPY apps/server/package.json package.json
+COPY apps/server/prisma prisma
+RUN pnpm install
+
+# Copy application code
+COPY apps/server/src/ src/
+COPY apps/server/tsconfig.json tsconfig.json
+
+# Final stage for app image
+FROM base
+
+# Copy built application
+COPY --from=build /repo /repo
+WORKDIR /repo/apps/server
+
+# Install ffmpeg and mkvmerge which is needed to encode video files
+RUN apt-get update -qq && apt-get install -y ffmpeg libsm6 libxext6 mkvtoolnix
+
+# Start a shell by default
+# NOTE: This is overridden in child dockerfiles
+CMD [ "bash" ]

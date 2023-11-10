@@ -1,0 +1,18 @@
+build:
+  docker:
+    web: Dockerfile.server
+
+release:
+  command:
+    - npx prisma migrate deploy
+  image: web
+
+run:
+  web:
+    command:
+      - npm start
+    image: web
+  worker:
+    command:
+      - npm run start:worker
+    image: web

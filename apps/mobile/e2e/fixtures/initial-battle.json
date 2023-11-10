@@ -1,0 +1,100 @@
+{
+  "id": "CURRENTBATTLE",
+  "createdAt": "2023-05-16T15:26:47.662Z",
+  "updatedAt": "2023-05-16T15:28:36.712Z",
+  "madeInactiveAt": null,
+  "madeInactiveReason": null,
+  "startedAt": "2023-05-16T15:26:56.542Z",
+  "completedAt": "2023-05-16T15:28:33.351Z",
+  "numberOfRounds": 1,
+  "turnLengthSeconds": 4,
+  "warmupLengthSeconds": 1,
+  "twilioRoomName": "battle-clhqfg0gr01bhpk2xhxbj4m6h-clhqfepql018lpk2x6evfrsc2-1684250807663",
+  "twilioRoomSid": "RM00000000000000000000000000000000",
+  "participants": [
+    {
+      "id": "CURRENTPARTICIPANT",
+      "createdAt": "2023-05-16T15:26:47.644Z",
+      "updatedAt": "2023-05-16T15:28:37.060Z",
+      "userId": "clhqfg0gi01bepk2x8cnt8q0b",
+      "battleId": "CURRENTBATTLE",
+      "order": 0,
+      "madeInactiveAt": null,
+      "associatedWithBattleAt": "2023-05-16T15:28:37.060Z",
+      "videoStreamingStartedAt": null,
+      "connectionStatus": "ONLINE",
+      "initialMatchFailed": false,
+      "currentState": "CREATED",
+      "currentContext": {
+        "version": 1,
+        "battleId": "CURRENTBATTLE",
+        "participantIds": [
+          "CURRENTPARTICIPANT",
+          "OTHERPARTICIPANT"
+        ],
+        "nextMessageUuid": "e87ace9b-f4fd-4c56-8fa7-a0a065c4c9eb",
+        "activeRoundIndex": 0,
+        "totalNumberOfRounds": 1,
+        "acknowlegedMessageUuids": [],
+        "currentParticipantIndex": 0
+      },
+      "readyForBattleAt": null,
+      "twilioAudioTrackId": null,
+      "twilioVideoTrackId": null,
+      "twilioDataTrackId": null,
+      "appState": null,
+      "twilioCompositionSid": null,
+      "twilioCompositionStatus": null,
+      "forfeitedAt": null,
+      "user": {
+        "id": "CURRENTUSER",
+        "handle": "barzdetoxtest",
+        "name": "Barz Detox Test",
+        "profileImageUrl": "https://picsum.photos/100/100",
+        "computedScore": 40000
+      }
+    },
+    {
+      "id": "OTHERPARTICIPANT",
+      "createdAt": "2023-05-16T15:25:47.086Z",
+      "updatedAt": "2023-05-16T15:28:40.043Z",
+      "userId": "OTHERUSER",
+      "order": 1,
+      "madeInactiveAt": null,
+      "associatedWithBattleAt": "2023-05-16T15:26:47.662Z",
+      "videoStreamingStartedAt": null,
+      "connectionStatus": "ONLINE",
+      "initialMatchFailed": true,
+      "currentState": "CREATED",
+      "currentContext": {
+        "version": 1,
+        "battleId": "CURRENTBATTLE",
+        "participantIds": [
+          "CURRENTPARTICIPANT",
+          "OTHERPARTICIPANT"
+        ],
+        "nextMessageUuid": "b4836d55-360f-4cf6-b35d-d047f32164b5",
+        "activeRoundIndex": 0,
+        "totalNumberOfRounds": 1,
+        "acknowlegedMessageUuids": [],
+        "currentParticipantIndex": 0
+      },
+      "readyForBattleAt": null,
+      "twilioAudioTrackId": "MT11111111111111111111111111111111",
+      "twilioVideoTrackId": "MT22222222222222222222222222222222",
+      "twilioDataTrackId": "UNKNOWN",
+      "appState": null,
+      "twilioCompositionSid": null,
+      "twilioCompositionStatus": null,
+      "forfeitedAt": null,
+      "user": {
+        "id": "OTHERUSER",
+        "handle": "barzdetoxother",
+        "name": "Barz Detox Other",
+        "profileImageUrl": "https://picsum.photos/100/100",
+        "computedScore": 40000
+      }
+    }
+  ],
+  "stateMachineEvents": []
+}

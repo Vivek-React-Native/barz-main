@@ -1,0 +1,17 @@
+{
+  "id": "EXAMPLECOMMENT",
+  "commentedAt": "2020-01-01T00:00:00Z",
+  "text": "Test comment!",
+  "battleId": "BATTLERECORDINGONE",
+  "user": {
+    "id": "clj92i92n0000cljd883qk006",
+    "handle": "participant1b",
+    "name": "participant1b",
+    "profileImageUrl": null,
+    "computedScore": 8000,
+    "computedFollowersCount": 0,
+    "computedFollowingCount": 0
+  },
+  "computedVoteTotal": 5,
+  "computedHasBeenVotedOnByUserMe": false
+}

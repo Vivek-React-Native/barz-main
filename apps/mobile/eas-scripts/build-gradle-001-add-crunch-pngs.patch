@@ -1,0 +1,13 @@
+diff --git a/android/app/build.gradle b/android/app/build.gradle
+index c661619..989efe8 100644
+--- a/android/app/build.gradle
++++ b/android/app/build.gradle
+@@ -146,6 +146,8 @@
+             signingConfig signingConfigs.debug
+         }
+         release {
++            crunchPngs false // ref: https://stackoverflow.com/a/72929836/4115328
++
+             // Caution! In production, you need to generate your own keystore file.
+             // see https://reactnative.dev/docs/signed-apk-android.
+             signingConfig signingConfigs.debug

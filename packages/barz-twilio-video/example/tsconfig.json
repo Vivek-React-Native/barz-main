@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "barz-twilio-video": ["../src/index"],
+      "barz-twilio-video/*": ["../src/*"]
+    }
+  }
+}

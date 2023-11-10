@@ -1,0 +1,8 @@
+{
+  "startingScore": 1000,
+  "projectedScores": {
+    "win": 1100,
+    "tie": 1000,
+    "loss": 900
+  }
+}

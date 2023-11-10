@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios", "android", "web"],
+  "ios": {
+    "modules": ["BarzTwilioVideoModule"]
+  },
+  "android": {
+    "modules": ["works.bread.barztwiliovideo.BarzTwilioVideoModule"]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "CURRENTPARTICIPANT",
+  "createdAt": "2023-05-16T15:26:47.644Z",
+  "updatedAt": "2023-05-16T15:28:37.060Z",
+  "userId": "clhqfg0gi01bepk2x8cnt8q0b",
+  "battleId": null,
+  "order": null,
+  "madeInactiveAt": null,
+  "associatedWithBattleAt": null,
+  "videoStreamingStartedAt": null,
+  "connectionStatus": "ONLINE",
+  "initialMatchFailed": false,
+  "currentState": "CREATED",
+  "currentContext": {
+    "version": 1,
+    "battleId": "CURRENTBATTLE",
+    "participantIds": [
+      "CURRENTPARTICIPANT",
+      "OTHERPARTICIPANT"
+    ],
+    "nextMessageUuid": "e87ace9b-f4fd-4c56-8fa7-a0a065c4c9eb",
+    "activeRoundIndex": 0,
+    "totalNumberOfRounds": 1,
+    "acknowlegedMessageUuids": [],
+    "currentParticipantIndex": 0
+  },
+  "readyForBattleAt": null,
+  "twilioAudioTrackId": null,
+  "twilioVideoTrackId": null,
+  "twilioDataTrackId": null,
+  "appState": null,
+  "twilioCompositionSid": null,
+  "twilioCompositionStatus": null,
+  "forfeitedAt": null,
+  "user": {
+    "id": "CURRENTUSER",
+    "handle": "barzdetoxtest",
+    "name": "Barz Detox Test",
+    "profileImageUrl": "https://picsum.photos/100/100",
+    "computedScore": 40000
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "id": "CURRENTCHALLENGE",
+  "createdAt": "2023-09-15T20:34:10.986Z",
+  "updatedAt": "2023-09-15T20:34:10.986Z",
+  "status": "PENDING",
+  "createdByUserId": "CURRENTUSER",
+  "createdByUserInWaitingRoom": true,
+  "createdByUserLastAliveAt": "2023-09-15T20:34:10.983Z",
+  "challengedUserId": "OTHERUSER",
+  "challengedUserInWaitingRoom": false,
+  "challengedUserLastAliveAt": null,
+  "startedAt": null,
+  "startedByUserId": null,
+  "cancelledAt": null,
+  "cancelledByUserId": null,
+  "battleId": null,
+  "createdByUser": {
+    "id": "CURRENTUSER",
+    "handle": "currentuser",
+    "name": "Current User",
+    "profileImageUrl": "https://picsum.photos/100/100",
+    "computedScore": 1000,
+    "computedFollowersCount": 1,
+    "computedFollowingCount": 2
+  },
+  "challengedUser": {
+    "id": "OTHERUSER",
+    "handle": "otheruser",
+    "name": "Other User",
+    "profileImageUrl": "https://picsum.photos/100/100",
+    "computedScore": 1000,
+    "computedFollowersCount": 1,
+    "computedFollowingCount": 2
+  }
+}

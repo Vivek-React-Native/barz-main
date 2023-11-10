@@ -1,0 +1,127 @@
+{
+  "battleId": "BATTLERECORDINGFIVE",
+  "battleStartedAt": "2023-06-27T15:57:49.275Z",
+  "battleCompletedAt": "2023-06-27T15:59:31.136Z",
+  "battleComputedPrivacyLevel": "PRIVATE",
+  "battleComputedHasBeenForfeited": false,
+  "battleExportedVideoUrl": null,
+  "battleVotingEndsAt": "2023-07-04T15:57:49.275Z",
+  "phases": [
+    {
+      "startsAt": "2020-01-01T00:00:00Z",
+      "endsAt": "2020-01-01T00:00:01Z",
+      "startsAtVideoStreamOffsetMilliseconds": 0,
+      "endsAtVideoStreamOffsetMilliseconds": 1000,
+      "state": "CREATED",
+      "activeParticipantId": null
+    },
+    {
+      "startsAt": "2020-01-01T00:00:01Z",
+      "endsAt": "2020-01-01T00:00:05Z",
+      "startsAtVideoStreamOffsetMilliseconds": 1000,
+      "endsAtVideoStreamOffsetMilliseconds": 5000,
+      "state": "COIN_TOSS",
+      "activeParticipantId": null
+    },
+    {
+      "startsAt": "2020-01-01T00:00:05Z",
+      "endsAt": "2020-01-01T00:00:08Z",
+      "startsAtVideoStreamOffsetMilliseconds": 5000,
+      "endsAtVideoStreamOffsetMilliseconds": 8000,
+      "state": "WARM_UP",
+      "activeParticipantId": "cljeese62013jyv0g7r04912a"
+    },
+    {
+      "startsAt": "2020-01-01T00:00:08Z",
+      "endsAt": "2020-01-01T00:00:14Z",
+      "startsAtVideoStreamOffsetMilliseconds": 8000,
+      "endsAtVideoStreamOffsetMilliseconds": 14000,
+      "state": "BATTLE",
+      "activeParticipantId": "cljeese62013jyv0g7r04912a"
+    },
+    {
+      "startsAt": "2020-01-01T00:00:14Z",
+      "endsAt": "2020-01-01T00:00:15Z",
+      "startsAtVideoStreamOffsetMilliseconds": 14000,
+      "endsAtVideoStreamOffsetMilliseconds": 15000,
+      "state": "TRANSITION_TO_NEXT_BATTLER",
+      "activeParticipantId": "cljeh1jmk01fyyv0g79e21d5f"
+    },
+    {
+      "startsAt": "2020-01-01T00:00:15Z",
+      "endsAt": "2020-01-01T00:00:18Z",
+      "startsAtVideoStreamOffsetMilliseconds": 15000,
+      "endsAtVideoStreamOffsetMilliseconds": 18000,
+      "state": "WARM_UP",
+      "activeParticipantId": "cljeh1jmk01fyyv0g79e21d5f"
+    },
+    {
+      "startsAt": "2020-01-01T00:00:18Z",
+      "endsAt": "2020-01-01T00:00:25Z",
+      "startsAtVideoStreamOffsetMilliseconds": 18000,
+      "endsAtVideoStreamOffsetMilliseconds": 25000,
+      "state": "BATTLE",
+      "activeParticipantId": "cljeh1jmk01fyyv0g79e21d5f"
+    },
+    {
+      "startsAt": "2020-01-01T00:00:25Z",
+      "endsAt": "2020-01-01T00:00:27Z",
+      "startsAtVideoStreamOffsetMilliseconds": 25000,
+      "endsAtVideoStreamOffsetMilliseconds": 27000,
+      "state": "COMPLETE",
+      "activeParticipantId": "cljeh1jmk01fyyv0g79e21d5f"
+    }
+  ],
+  "participants": [
+    {
+      "id": "TXkGmcwy1dwE8GOk8Wq0AJx8r",
+      "order": 0,
+      "twilioAudioTrackId": "MT5a804912a703ef97d10a75a232602f83",
+      "twilioVideoTrackId": "MT42bbaa46f91510638e21d5f43fbc0801",
+      "twilioDataTrackId": "UNKNOWN",
+      "forfeitedAt": null,
+      "twilioAudioRecordingId": "RT25c264e3bc87fba0b3d4c24b284b0a76",
+      "twilioVideoRecordingId": "RT50ea45451a1089b578f107d957e57f4e",
+      "videoStreamingStartedAt": "2023-06-27T15:57:52.342Z",
+      "madeInactiveAt": "2023-06-27T15:59:31.136Z",
+      "mediaUrl": "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+      "mediaThumbnailUrls": {},
+      "mediaOffsetMilliseconds": 0,
+      "computedTotalVoteAmount": 10,
+      "user": {
+        "id": "cljcwr5ph0000wa0g0zn22v8r",
+        "handle": "participant5a",
+        "name": "participant5a",
+        "profileImageUrl": null,
+        "computedScore": 6000,
+        "computedFollowersCount": 0,
+        "computedFollowingCount": 0
+      }
+    },
+    {
+      "id": "gYoNJLiwuXB75b2ZzH5EHP7Un",
+      "order": 1,
+      "twilioAudioTrackId": "MT783067bacb37a0d7dbb1ff19aa09a72e",
+      "twilioVideoTrackId": "MT2512f452089abff47a358259f55fcfe7",
+      "twilioDataTrackId": "UNKNOWN",
+      "forfeitedAt": null,
+      "twilioAudioRecordingId": "RTb342ff4883bfd311889edbb34a592414",
+      "twilioVideoRecordingId": "RT327eacecc7a7ab75a61e79ab7217a4b9",
+      "videoStreamingStartedAt": "2023-06-27T15:57:51.200Z",
+      "madeInactiveAt": "2023-06-27T15:59:31.136Z",
+      "mediaUrl": "https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+      "mediaThumbnailUrls": {},
+      "mediaOffsetMilliseconds": 0,
+      "computedTotalVoteAmount": 4,
+      "user": {
+        "id": "clj92i92n0000x40ggi4ig4xb",
+        "handle": "participant5b",
+        "name": "participant5b",
+        "profileImageUrl": null,
+        "computedScore": 9000,
+        "computedFollowersCount": 0,
+        "computedFollowingCount": 0
+      }
+    }
+  ]
+}
